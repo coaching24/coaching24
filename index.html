@@ -164,10 +164,10 @@
                     📂 Premium Study Materials
                 </h3>
                 
-                <!-- 4 Category Filter Tabs -->
+                <!-- 4 Category Filter Tabs (Updated Order: Mock Test First, PDF Notes Second) -->
                 <div class="grid grid-cols-2 gap-1.5 my-3">
-                    <button onclick="switchContentTab('pdf')" id="subtab-pdf" class="content-subtab border border-gray-200 text-[11px] font-bold p-2 rounded-lg bg-gray-50 text-gray-600 text-center transition cursor-pointer">📄 PDF Notes</button>
                     <button onclick="switchContentTab('mock')" id="subtab-mock" class="content-subtab border border-gray-200 text-[11px] font-bold p-2 rounded-lg bg-gray-50 text-gray-600 text-center transition cursor-pointer">📝 Full Mock Test</button>
+                    <button onclick="switchContentTab('pdf')" id="subtab-pdf" class="content-subtab border border-gray-200 text-[11px] font-bold p-2 rounded-lg bg-gray-50 text-gray-600 text-center transition cursor-pointer">📄 PDF Notes</button>
                     <button onclick="switchContentTab('sectional')" id="subtab-sectional" class="content-subtab border border-gray-200 text-[11px] font-bold p-2 rounded-lg bg-gray-50 text-gray-600 text-center transition cursor-pointer">⚡ Sectional Test</button>
                     <button onclick="switchContentTab('topic')" id="subtab-topic" class="content-subtab border border-gray-200 text-[11px] font-bold p-2 rounded-lg bg-gray-50 text-gray-600 text-center transition cursor-pointer">🎯 Topic Test</button>
                 </div>
@@ -366,8 +366,8 @@
                         <option value="upsi">UP SI</option>
                     </select>
                     <select id="upload-type" class="w-full p-2 border border-gray-300 rounded-lg bg-gray-50 text-sm">
-                        <option value="pdf">📄 PDF Notes</option>
                         <option value="mock">📝 Full Mock Test</option>
+                        <option value="pdf">📄 PDF Notes</option>
                         <option value="sectional">⚡ Sectional Test</option>
                         <option value="topic">🎯 Topic Test</option>
                     </select>
@@ -526,7 +526,7 @@
         let currentUser = null;
         let currentExam = 'uptet';
         let currentLevelFilter = 'lvl1'; 
-        let currentContentTab = 'pdf'; 
+        let currentContentTab = 'mock'; // Default setup changed from 'pdf' to 'mock'
         let authMode = 'login';
         let globalAdminContentArray = [];
         let userHasCourseAccess = false; 
@@ -557,7 +557,6 @@
         };
 
         window.toggleAuthMode = function(mode) {
-            authMode = mode;
             const title = document.getElementById('auth-modal-title');
             const desc = document.getElementById('auth-modal-desc');
             const nameDiv = document.getElementById('div-student-name');
@@ -965,7 +964,7 @@
                     let userData = snapshot.val();
                     let profile = userData.profile || {};
                     
-                    document.getElementById('profile-edit-name').value = profile.name || userData.name || '';
+                    document.getElementById('profile-edit-name').value = profile.name || userData.name || userData.username || '';
                     document.getElementById('profile-edit-mobile').value = profile.mobile || userData.mobile || '';
                     document.getElementById('profile-display-regdate').value = profile.dateRegistered || userData.dateRegistered || 'N/A';
                     
@@ -1016,7 +1015,6 @@
             if (user) {
                 currentUser = user;
                 closeAuthModal();
-                // IMAGE_1DBA0.PNG OPTIMIZATION: ICON AND EMAIL IS NOW CLICKABLE ROUTE LINK
                 document.getElementById("auth-status").innerHTML = `
                     <div class="flex items-center gap-2 bg-blue-800 px-3 py-1.5 rounded-lg border border-blue-600 shadow-xs">
                         <button onclick="navigateTo('profile')" class="text-xs font-bold text-yellow-300 flex items-center gap-1 cursor-pointer hover:text-white transition" title="View & Update Profile">
@@ -1204,7 +1202,7 @@
 
         window.deleteIndividualBatch = function(uid, courseKey) {
             if(confirm(`⚠️ Kya aap is student ke account se sirf "${courseKey.replace('_', ' ').toUpperCase()}" batch ko delete karna chahte hain?\n\nStudent ka account aur baaki batches safe rahenge.`)) {
-                remove(ref(ref(db, `users/${uid}/courses/${courseKey}`))).then(() => {
+                remove(ref(db, `users/${uid}/courses/${courseKey}`)).then(() => {
                     alert("🎉 Selected batch successfully delete ho gaya!");
                     loadStudentsDataForAdmin();
                     calculateFeesAnalytics();
